@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd 
 
 #with transformer file we transform csv file to json 
-df = pd.read_csv('../../data/data.csv') # small_data just small samle of 350 entries first 
-                                      # data.csv whole dataset  
+#This is just a sample of 10k data 
+df = pd.read_csv('../project_data.csv')
 
 #add json column in df, splitlines  this splits into multiple rows 
 
