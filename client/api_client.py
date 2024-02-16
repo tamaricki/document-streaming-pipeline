@@ -8,9 +8,9 @@ with open('./output.txt', 'r') as f:
     data = f.readlines()
 
 size = len(data)
-#for test we can first test with smaller no of data like 15
 
-for i in range(size):  #afterwards we can remove 
+
+for i in range(size):  
     myjson = json.loads(data[i])
     print(myjson)
     response = requests.post('http://localhost:80/invoiceitem', json=myjson)
