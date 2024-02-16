@@ -15,7 +15,7 @@ from kafka import KafkaProducer, producer
 
 class InvoiceItem(BaseModel):
     #inovice no was int in example , and CustomerID might be also str, error on postman StockCode should be string
-    InvoiceNo: int
+    InvoiceNo: str
     StockCode: str
     Description: str
     Quantity: int
@@ -37,7 +37,7 @@ async def post_invoice_item(item: InvoiceItem): # new invoice which contains inf
     print('message received')
 
     try:
-        date = datetime.strptime(item.InvoiceDate, '%d/%m/%Y %H:%M') # probably error should not be %m/%d/%Y ? 
+        date = datetime.strptime(item.InvoiceDate, '%m/%d/%Y %H:%M') 
         print('found a timestamp', date)
 
         #reformating the date 
