@@ -6,7 +6,7 @@ import numpy as np
 import pymongo
 
 #connection to db 
-myclient = pymongo.MongoClient("mongodb://localhost:27017", username='root', passwordd='example')
+myclient = pymongo.MongoClient("mongodb://localhost:27017", username='root', password='example')
 mydb = myclient["docstreaming"] #db name
 mycol = mydb['invoices'] #collection name 
 
