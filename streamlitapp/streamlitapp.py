@@ -1,4 +1,5 @@
 
+#%%
 import streamlit as st
 import pandas as pd 
 import numpy as np
@@ -10,7 +11,22 @@ myclient = pymongo.MongoClient("mongodb://localhost:27017", username='root', pas
 mydb = myclient["docstreaming"] #db name
 mycol = mydb['invoices'] #collection name 
 
-cust_id = st.sidebar.text_input("Customer ID")
+
+#%%
+#we create data frame from db collection 
+df = pd.DataFrame(list(mycol.find())) 
+
+df.info()
+
+#%%
+# we can create drop down list of cucstomer Ids for selection 
+unique_customers = df['CustomerID'].unique()
+
+
+#%%
+
+
+cust_id = st.sidebar.selectbox("Select the Customer ID", unique_customers)
 
 if cust_id:
     my_query = {"CustomerID": cust_id}
@@ -24,7 +40,7 @@ if cust_id:
     st.header("Output Customer Invoices")
     table = st.dataframe(data=df)
 
-inv_no = st.sidebar.text_input('InvoiceNo:')
+inv_no = st.sidebar.text_input("Select invoice")
 
 if inv_no:
     my_query = {"InvoiceNo": inv_no}
