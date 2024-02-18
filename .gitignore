@@ -3,4 +3,5 @@
 *.pkl
 *.pyc
 *.txt
+.env.default 
 
