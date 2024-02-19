@@ -4,4 +4,5 @@
 *.pyc
 *.txt
 .env.default 
+.png
 
