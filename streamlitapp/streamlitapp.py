@@ -3,6 +3,7 @@
 import streamlit as st
 import pandas as pd 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import pymongo
 
@@ -12,18 +13,46 @@ mydb = myclient["docstreaming"] #db name
 mycol = mydb['invoices'] #collection name 
 
 
-#%%
+
 #we create data frame from db collection 
 df = pd.DataFrame(list(mycol.find())) 
 
-df.info()
+df = df[df['CustomerID']!='0'] # exclude customers without customerID
+
+df['InvoiceDate']= pd.to_datetime(df['InvoiceDate']).dt.normalize()   
+#df['Date'] = df['InvoiceDate'].dt.normalize()
+df['Quantity'] = df['Quantity'].astype('int')
+df['UnitPrice'] = df['UnitPrice'].astype('float')
+df['TotalValue'] = df['UnitPrice'] * df['Quantity']
+df['Month'] = df['InvoiceDate'].dt.month
+
+#df.info()
+
+
+bydate = df.groupby(['Month', 'CustomerID'])['TotalValue'].sum().reset_index(name='total_value').sort_values(by=['Month', 'total_value'], ascending=False)
+
+jan_best = bydate[bydate['Month']==1].sort_values(by=['total_value'], ascending=False)
+
+
+
+dec_best=bydate[bydate['Month']==12].sort_values(by=['total_value'], ascending=False)
+#dec_best
+
+nov_best=bydate[bydate['Month']==11].sort_values(by=['total_value'], ascending=False)
+
+jul_best=bydate[bydate['Month']==7].sort_values(by=['total_value'], ascending=False)
+
+
+
+customer = df.groupby('CustomerID')['TotalValue'].sum().sort_values(ascending=False)
+
+#customer
+
+
 
 #%%
 # we can create drop down list of cucstomer Ids for selection 
 unique_customers = df['CustomerID'].unique()
-
-
-#%%
 
 
 cust_id = st.sidebar.selectbox("Select the Customer ID", unique_customers)
@@ -40,7 +69,9 @@ if cust_id:
     st.header("Output Customer Invoices")
     table = st.dataframe(data=df)
 
-inv_no = st.sidebar.text_input("Select invoice")
+customer_invoices = df[df['CustomerID']==cust_id]['InvoiceNo']
+
+inv_no = st.sidebar.selectbox("Select invoice", customer_invoices)
 
 if inv_no:
     my_query = {"InvoiceNo": inv_no}
@@ -51,4 +82,38 @@ if inv_no:
     reindex =df.reindex(sorted(df.columns), axis=1)
 
     st.header("Output by Invoice number")
+  
     table = st.dataframe(data=reindex)
+#%%
+#adding sections for visualisations
+st.markdown('---')
+
+st.write('### Top 10 Customers for January, July and December')
+
+fig = plt.figure()
+plt.bar(jan_best['CustomerID'].head(10), jan_best['total_value'].head(10), color='slateblue')
+plt.xlabel('CustomerId')
+plt.ylabel('Value Purchased')
+plt.xticks(rotation=45)
+plt.title('Top 10 Customers in January')
+st.pyplot(fig)
+
+
+fig= plt.figure()
+plt.barh(jul_best['CustomerID'].head(10), jul_best['total_value'].head(10), color='thistle' )
+plt.xlabel('Total Value Purchased')
+plt.xticks(rotation=45)
+plt.ylabel('Customer ID')
+plt.title('Top 10 Customers July')
+st.pyplot(fig)
+
+fig = plt.figure()
+plt.barh(dec_best['CustomerID'].head(10), dec_best['total_value'].head(10), color = 'purple')
+plt.xlabel('Total Value Purchased')
+plt.ylabel('Customer ID')
+plt.xticks(rotation=45)
+plt.title('Top 10 Customers December')
+st.pyplot(fig)
+
+
+
