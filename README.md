@@ -5,7 +5,7 @@ In this project we are building scalable end-to-end solution that captures e-com
 ### Design 
 
 Project high-level design: 
-![alt image](image.png)
+![alt text](image.png)
 
 
 ### Data 
