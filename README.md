@@ -5,7 +5,7 @@ In this project we are building scalable end-to-end solution that captures e-com
 ### Design 
 
 Project high-level design: 
-![alt text](image.png)
+![alt text](https://github.com/tamaricki/document-streaming-pipeline/blob/main/streamlitapp/image.png)
 
 
 ### Data 
