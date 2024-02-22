@@ -61,7 +61,7 @@ async def post_invoice_item(item: InvoiceItem): # new invoice which contains inf
 
 
 def produce_kafka_string(json_str):
-    producer = KafkaProducer(bootstrap_servers="kafka:9092", acks=1)
+    producer = KafkaProducer(bootstrap_servers="kafka:9092", acks=1) #for local test used localhost:9093
     #string to be written as bytes to match kafka requirements
     producer.send('ingestion-topic', bytes(json_str, 'utf-8'))
     producer.flush()

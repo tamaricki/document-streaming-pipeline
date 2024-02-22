@@ -19,7 +19,7 @@ df = pd.DataFrame(list(mycol.find()))
 
 df = df[df['CustomerID']!='0'] # exclude customers without customerID
 #extract date from datetime and keep datetime64 format 
-df['InvoiceDate']= pd.to_datetime(df['InvoiceDate']).dt.normalize()   
+df['InvoiceDate']= pd.to_datetime(df['InvoiceDate'], dayfirst=True).dt.normalize()   
 #change datatype in order to create visualisations, calculate total value , extract month 
 df['Quantity'] = df['Quantity'].astype('int')
 df['UnitPrice'] = df['UnitPrice'].astype('float')
@@ -41,7 +41,8 @@ jul_best=bydate[bydate['Month']==7].sort_values(by=['total_value'], ascending=Fa
 customer = df.groupby('CustomerID')['TotalValue'].sum().sort_values(ascending=False)
 
 #customer
-
+#%%
+transactions = df.groupby('Month')['StockCode'].count().reset_index(name='TransactionsCount')
 
 
 #%%
@@ -96,43 +97,57 @@ with cols[0]:
     #st.pyplot(fig)
 
     st.bar_chart(new_df, x='Month', y='TotalValue')
+
+    counts = df.UnitPrice.value_counts().reset_index(name='counts')
+    #fit=plt.figure()
+    st.bar_chart(counts, x='UnitPrice', y='counts')
+   # plt.legend()
+    #plt.xlim(0,20)
+    #st.pyplot(fit)
+
+    
     
 
 with cols[1]:
 
-    st.write('#### Top 10 Customers for January, July and December')
+    st.write('#### Data Analysis')
 
     fig = plt.figure()
-    plt.bar(jan_best['CustomerID'].head(10), jan_best['total_value'].head(10), color='slateblue')
-    plt.xlabel('CustomerId')
-    plt.ylabel('Value Purchased')
-    plt.xticks(rotation=45)
-    plt.title('Top 10 Customers in January')
-    st.pyplot(fig)
-
-
-    fig= plt.figure()
-    plt.barh(jul_best['CustomerID'].head(10), jul_best['total_value'].head(10), color='thistle' )
-    plt.xlabel('Total Value Purchased')
-    plt.xticks(rotation=45)
-    plt.ylabel('Customer ID')
-    plt.title('Top 10 Customers July')
-    st.pyplot(fig)
-
-    fig = plt.figure()
-    plt.barh(dec_best['CustomerID'].head(10), dec_best['total_value'].head(10), color = 'purple')
+    plt.barh(dec_best['CustomerID'].head(10), dec_best['total_value'].head(10), color = 'lightgreen')
     plt.xlabel('Total Value Purchased')
     plt.ylabel('Customer ID')
     plt.xticks(rotation=45)
-    plt.title('Top 10 Customers December')
+    plt.title('Top 10 Customers Purchases December')
     st.pyplot(fig)
+
+    fig = plt.figure()
+    plt.bar(transactions['Month'], transactions['TransactionsCount'], color='slateblue')
+    plt.xlabel('Month')
+    #plt.xticks(rotation=45)
+    plt.title('Transactions Count per Month')
+    st.pyplot(fig)
+
+
+    #fig= plt.figure()
+    #plt.barh(jul_best['CustomerID'].head(10), jul_best['total_value'].head(10), color='thistle' )
+    #plt.xlabel('Total Value Purchased')
+    #plt.xticks(rotation=45)
+    #plt.ylabel('Customer ID')
+    #plt.title('Top 10 Customers July')
+    #st.pyplot(fig)
+
+
 
 
 #%%
-cust='17211'
+
+df.hist('UnitPrice')
+plt.xlim(0,20)
+plt.show()
 
 # %%
 
-df.Month.value_counts()
+
+# %%
 
 # %%
